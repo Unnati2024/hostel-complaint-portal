@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Complaint Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #f3f1ef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Main Container */
+        .container {
+            text-align: center;
+        }
+
+        /* Icon */
+        .icon {
+            width: 70px;
+            height: 70px;
+            background: #c45d3c;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            color: white;
+            font-size: 28px;
+        }
+
+        /* Title */
+        h1 {
+            margin-top: 20px;
+            font-size: 30px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Cards */
+        .card {
+            width: 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        /* Card Icon */
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: #f2e6e1;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            color: #c45d3c;
+        }
+
+        /* Text */
+        .card-text h3 {
+            margin: 0;
+        }
+
+        .card-text p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="icon">🏢</div>
+
+    <h1>Hostel Complaint Portal</h1>
+    <p>Report issues & get them resolved quickly</p>
+
+    <!-- Student -->
+    <div class="card" onclick="goStudent()">
+        <div class="card-icon">🎓</div>
+        <div class="card-text">
+            <h3>I'm a Student</h3>
+            <p>Submit and track your complaints</p>
+        </div>
+    </div>
+
+    <!-- Admin -->
+    <div class="card" onclick="goAdmin()">
+        <div class="card-icon">🛡</div>
+        <div class="card-text">
+            <h3>I'm an Admin</h3>
+            <p>Manage and resolve complaints</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function goStudent() {
+        window.location.href = "student.html"; // your complaint form page
+    }
+
+    function goAdmin() {
+        window.location.href = "admin.html";
+    }
+</script>
+
+</body>
+</html>

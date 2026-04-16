@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body{
+        font-family:Arial;
+        background:linear-gradient(135deg,#eef2f7,#dfe9f3);
+        padding:20px;
+        }
+
+        h1{text-align:center}
+
+        .stats{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:20px;
+        margin:20px 0;
+        }
+
+        .card{
+        background:white;
+        padding:20px;
+        border-radius:12px;
+        text-align:center;
+        }
+
+        .chart-container{
+        display:flex;
+        gap:20px;
+        margin-top:20px;
+        }
+
+        canvas{
+        background:white;
+        padding:10px;
+        border-radius:10px;
+        height:250px !important;
+        }
+
+        table{
+        width:100%;
+        margin-top:20px;
+        background:white;
+        border-collapse:collapse;
+        }
+
+        th,td{
+        padding:10px;
+        border:1px solid #ddd;
+        text-align:center;
+        }
+
+        th{
+        background:#4f46e5;
+        color:white;
+        }
+
+        button{
+        padding:6px 10px;
+        border:none;
+        color:white;
+        border-radius:6px;
+        cursor:pointer;
+        }
+
+        .resolve{background:green}
+        .delete{background:red}
+    </style>
+</head>
+
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<div class="stats">
+    <div class="card"><h2 id="total">0</h2><p>Total</p></div>
+    <div class="card"><h2 id="pending">0</h2><p>Pending</p></div>
+    <div class="card"><h2 id="resolved">0</h2><p>Resolved</p></div>
+</div>
+
+<div class="chart-container">
+    <canvas id="barChart"></canvas>
+    <canvas id="pieChart"></canvas>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Student</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="table"></tbody>
+</table>
+
+<script>
+
+    let barChart, pieChart;
+
+    function load(){
+    fetch("http://localhost:8080/api/complaints/all")
+    .then(res=>res.json())
+    .then(data=>render(data))
+    }
+
+    function render(data){
+
+    document.getElementById("total").innerText=data.length
+    document.getElementById("pending").innerText=data.filter(x=>x.status==="Pending").length
+    document.getElementById("resolved").innerText=data.filter(x=>x.status==="Resolved").length
+
+    let categoryMap={}, statusMap={Pending:0,Resolved:0}
+    let html=""
+
+    data.forEach(c=>{
+
+    categoryMap[c.category]=(categoryMap[c.category]||0)+1
+    statusMap[c.status]++
+
+    html+=`
+    <tr>
+    <td>${c.complaintId}</td>
+    <td>${c.studentId}</td>
+    <td>${c.category}</td>
+    <td>${c.description}</td>
+    <td>${c.status}</td>
+    <td>
+    <button class="resolve" onclick="resolve(${c.complaintId})">Resolve</button>
+    <button class="delete" onclick="del(${c.complaintId})">Delete</button>
+    </td>
+    </tr>`
+    })
+
+    document.getElementById("table").innerHTML=html
+
+    drawCharts(categoryMap,statusMap)
+    }
+
+    function drawCharts(categoryMap,statusMap){
+
+    if(barChart) barChart.destroy()
+    if(pieChart) pieChart.destroy()
+
+    barChart=new Chart(document.getElementById("barChart"),{
+    type:"bar",
+    data:{
+    labels:Object.keys(categoryMap),
+    datasets:[{
+    label:"Complaints by Category",
+    data:Object.values(categoryMap)
+    }]
+    }
+    })
+
+    pieChart=new Chart(document.getElementById("pieChart"),{
+    type:"pie",
+    data:{
+    labels:Object.keys(statusMap),
+    datasets:[{
+    data:Object.values(statusMap)
+    }]
+    }
+    })
+    }
+
+    function resolve(id){
+    fetch(`http://localhost:8080/api/complaints/update/${id}?status=Resolved`,{
+    method:"PUT"
+    }).then(()=>load())
+    }
+
+    function del(id){
+    fetch(`http://localhost:8080/api/complaints/delete/${id}`,{
+    method:"DELETE"
+    }).then(()=>load())
+    }
+
+    load()
+
+</script>
+
+</body>
+</html>
